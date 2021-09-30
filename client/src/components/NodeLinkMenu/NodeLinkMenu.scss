@@ -1,0 +1,16 @@
+@import '../../global/globalCssVariables';
+
+.linkMenu {
+  min-width: 200px;
+  height: fit-content;
+  height: 300px;
+  border-radius: 5px;
+  background-color: $secondary-background-color;
+  overflow: hidden;
+
+  .anchorItem {
+    cursor: pointer;
+    font-size: 0.7rem;
+    padding: 10px;
+  }
+}

@@ -1,0 +1,55 @@
+@import '../../global/globalCssVariables';
+
+.nodeView {
+  .nodeView-json {
+    background-color: $selected-color;
+    overflow: hidden;
+    font-size: 12px;
+    padding: 20px;
+    border-radius: 5px;
+  }
+
+  .nodeView-breadcrumb {
+    display: flex;
+    padding: 10px;
+    justify-content: left;
+    align-items: center;
+    border-bottom: $standard-border;
+    padding-left: 20px;
+  }
+
+  .nodeView-info {
+    display: flex;
+    gap: 10px;
+    font-size: 30px;
+    font-weight: 500;
+    padding: 10px;
+    padding-left: 20px;
+    justify-content: left;
+    align-items: center;
+    border-bottom: $standard-border;
+
+    .nodeView-title {
+      padding-bottom: 3px;
+      font-weight: 600;
+    }
+
+    .nodeView-buttonBar {
+      gap: 10px;
+      display: flex;
+      height: 50px;
+      position: relative;
+      align-content: center;
+      justify-content: flex-start;
+      align-items: center;
+      margin-left: 5px;
+    }
+  }
+
+  .nodeView-content {
+    padding: 20px;
+    // display: flex;
+    // flex-direction: row;
+    // gap: 15px;
+  }
+}
