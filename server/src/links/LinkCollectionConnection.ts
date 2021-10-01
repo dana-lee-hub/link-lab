@@ -1,11 +1,5 @@
-import {
-  IServiceResponse,
-  failureServiceResponse,
-  successfulServiceResponse,
-  ILink,
-  isILink,
-} from '../types'
 import { MongoClient } from 'mongodb'
+import { failureServiceResponse, ILink, IServiceResponse } from '../types'
 
 /**
  * LinkCollectionConnection acts as an in-between communicator between
@@ -26,17 +20,21 @@ export class LinkCollectionConnection {
   }
 
   /**
+   *
+   * TODO [Lab 2]
+   *
+   * Deletes links when given a list of linkIds.
+   * @param {string[]} linkIds
+   * @return successfulServiceResponse<{}> on success
+   *         failureServiceResponse on failure
+   */
+  async deleteLinks(linkIds: string[]): Promise<IServiceResponse<{}>> {
+    return failureServiceResponse('Hidden for assignment')
+  }
+
+  /**
    * Inserts a new link into the database
    * Returns successfulServiceResponse with ILink that was inserted as the payload
-   *
-   * TODO (Lab 2):
-   * - Tip: Use NodeCollectionConnection.insertNode() as a close reference!
-   * 1. Return failure response if link is not of type ILink
-   *    - Tip: Check types/ILink.ts for useful helper function
-   * 2. Insert link into collection via client
-   * 3. Verify that the insertion was successful
-   *    - Tip: Use NodeCollecitonConnection.insertNode() as a close reference
-   * 4. Return successful response or failure response based on result of Step 3
    *
    * @param {ILink} link
    * @return successfulServiceResponse<ILink>
@@ -57,8 +55,6 @@ export class LinkCollectionConnection {
   /**
    * Finds Link by its unique linkId
    *
-   * TODO: (Lab 2):
-   * - Tip: Use NodeCollectionConnection.findNodeById() as a close reference!
    *
    * @param {string} linkId
    * @return successfulServiceResponse<ILink> on success
@@ -87,16 +83,6 @@ export class LinkCollectionConnection {
    *         failureServiceResponse on failure
    */
   async deleteLink(linkId: string): Promise<IServiceResponse<{}>> {
-    return failureServiceResponse('Hidden for assignment')
-  }
-
-  /**
-   * Deletes links when given a list of linkIds.
-   * @param {string[]} linkIds
-   * @return successfulServiceResponse<{}> on success
-   *         failureServiceResponse on failure
-   */
-  async deleteLinks(linkIds: string[]): Promise<IServiceResponse<{}>> {
     return failureServiceResponse('Hidden for assignment')
   }
 

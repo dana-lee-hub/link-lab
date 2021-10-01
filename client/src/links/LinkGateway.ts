@@ -1,11 +1,5 @@
-import {
-  failureServiceResponse,
-  ILink,
-  INode,
-  IServiceResponse,
-  TreeWrapper,
-} from '../types'
-import { get, post, put, remove } from './request'
+import { failureServiceResponse, ILink, INode, IServiceResponse } from '../types'
+import { get, post, remove } from './request'
 
 /** In development mode (locally) the server is at localhost:5000*/
 let baseEndpoint = 'http://localhost:5000/'
@@ -31,10 +25,6 @@ const LinkGateway = {
   /**
    * createNode
    *
-   * TODO: (Lab 1)
-   * 1. Try to submit a post request
-   * 2. Catch exceptions and return a failureServiceResponse if it is unsuccessful
-   *
    * @param node
    * @returns
    */
@@ -47,12 +37,8 @@ const LinkGateway = {
       return failureServiceResponse('[createNode] Unable to access backend')
     }
   },
+
   /**
-   * getNode
-   *
-   * TODO:
-   * 1.
-   * 2.
    *
    * @param nodeId
    * @returns
@@ -68,11 +54,6 @@ const LinkGateway = {
   },
   /**
    * deleteNode
-   *
-   * TODO:
-   * 1.
-   * 2.
-   *
    *
    * @param nodeId
    * @returns

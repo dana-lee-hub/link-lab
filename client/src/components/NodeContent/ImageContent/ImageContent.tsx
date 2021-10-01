@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as fa from 'react-icons/fa'
 import { IAnchor, IImageExtent } from '../../../types'
 import { INodeContentProps } from '../NodeContent'
@@ -8,6 +8,10 @@ import './ImageContent.scss'
 /** Full page view focused on a node's content, with annotations and links */
 export const ImageContent = (props: INodeContentProps) => {
   const { node, content, preview, anchors, selectedAnchor, setSelectedExtent } = props
+
+  /**
+   * return the preview container if we are rendering an image preview
+   */
   if (preview) {
     return (
       <div className="imageContent-preview">
@@ -16,11 +20,25 @@ export const ImageContent = (props: INodeContentProps) => {
     )
   }
 
-  let dragging: boolean = false
-  let currentTop: number
-  let currentLeft: number
+  // Use state to keep track of anchors rendered on image
+  const [imageAnchors, setImageAnchors] = useState<JSX.Element[]>([])
 
+  let dragging: boolean = false // Indicated whether we are currently dragging on the image
+  let currentTop: number // To store the top of the currently selected region for onMoce
+  let currentLeft: number // To store the left of the currently selected region for onMove
+
+  /**
+   * useRef EXAMPLE: Here is an example of use ref to store a mutable html object
+   * The selection ref is how we can access the selection that we render
+   */
+  const imageContainer = useRef<HTMLHeadingElement>(null)
+  const selection = useRef<HTMLHeadingElement>(null)
+
+  /**
+   * To trigger on load and when we setSelectedExtent
+   */
   useEffect(() => {
+    displayImageAnchors()
     setSelectedExtent && setSelectedExtent(null)
   }, [setSelectedExtent])
 
@@ -32,16 +50,18 @@ export const ImageContent = (props: INodeContentProps) => {
     e.preventDefault()
     e.stopPropagation()
     dragging = true
-    const top = imageContainer.current?.getBoundingClientRect().top
-    const left = imageContainer.current?.getBoundingClientRect().left
+    // The y location of the image top in the browser
+    const imageTop = imageContainer.current?.getBoundingClientRect().top
+    // The x location of the image left in the browser
+    const imageLeft = imageContainer.current?.getBoundingClientRect().left
 
-    const x = e.clientX
-    const y = e.clientY
-    if (selection.current && left && top) {
-      selection.current.style.left = String(x - left) + 'px'
-      selection.current.style.top = String(y - top) + 'px'
-      currentLeft = x - left
-      currentTop = y - top
+    const x = e.clientX // The x location of the pointer in the browser
+    const y = e.clientY // The y location of the poitner in the browser
+    if (selection.current && imageLeft && imageTop) {
+      selection.current.style.left = String(x - imageLeft) + 'px'
+      selection.current.style.top = String(y - imageTop) + 'px'
+      currentLeft = x - imageLeft
+      currentTop = y - imageTop
       selection.current.style.width = '0px'
       selection.current.style.height = '0px'
     }
@@ -55,10 +75,10 @@ export const ImageContent = (props: INodeContentProps) => {
     e.preventDefault()
     e.stopPropagation()
     if (dragging) {
-      const x = e.clientX
-      const y = e.clientY
-      const deltaX = e.movementX
-      const deltaY = e.movementY
+      const x = e.clientX // The x location of the pointer in the browser
+      const y = e.clientY // The y location of the poitner in the browser
+      const deltaX = e.movementX // The change in the x location
+      const deltaY = e.movementY // The change in the y location
       if (selection.current) {
         const imageTop = imageContainer.current?.getBoundingClientRect().top
         const imageLeft = imageContainer.current?.getBoundingClientRect().left
@@ -70,23 +90,30 @@ export const ImageContent = (props: INodeContentProps) => {
         // TODO: Change this depending on your screen resolution
         const divider = 1
 
+        // Horizontal dragging
+        // Case A: Dragging above start point
         if (imageLeft && x - imageLeft < currentLeft) {
           width -= deltaX / divider
           left += deltaX / divider
           selection.current.style.left = String(left) + 'px'
+          // Case B: Dragging below start point
         } else {
           width += deltaX / divider
         }
 
+        // Vertical dragging
+        // Case A: Dragging to the left of start point
         if (imageTop && y - imageTop < currentTop) {
           console.log(top)
           height -= deltaY / divider
           top += deltaY / divider
           selection.current.style.top = String(top) + 'px'
+          // Case B: Dragging to the right of start point
         } else {
           height += deltaY / divider
         }
 
+        // Update height and width
         selection.current.style.width = String(width) + 'px'
         selection.current.style.height = String(height) + 'px'
       }
@@ -94,7 +121,9 @@ export const ImageContent = (props: INodeContentProps) => {
   }
 
   /**
-   * onPointerUp updates and completes the selection
+   * onPointerUp so we have completed making our selection,
+   * therefore we should create a new IImageExtent and
+   * update the currently selected extent
    * @param e
    */
   const onPointerUp = (e: React.PointerEvent) => {
@@ -111,14 +140,12 @@ export const ImageContent = (props: INodeContentProps) => {
         width: parseFloat(selection.current.style.width),
         height: parseFloat(selection.current.style.height),
       }
+      // Check if setSelectedExtent exists, if it does then update it
       if (setSelectedExtent) {
         setSelectedExtent(extent)
       }
     }
   }
-
-  const imageContainer = useRef<HTMLHeadingElement>(null)
-  const selection = useRef<HTMLHeadingElement>(null)
 
   const onHandleClearSelectionClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -136,33 +163,32 @@ export const ImageContent = (props: INodeContentProps) => {
   }
 
   /**
-   * TODO [Lab]: Write a method where we filter through the existing anchors.
+   * TODO [Lab]: This method displays the existing anchors.
    * Normally we would fetch these from the database, but for the simplicity
    * of this lab we are randomly generating them in the `imageAnchors.ts` file in the
    * `ImageContent` folder.
    *
-   * Unlike text, where we were changing existing HTML, in this we are adding another
-   * layer on top of the image. This turns out to actually be quite a lot easier!
-   *
    * Hints:
    * We want to loop through our list of existing anchors and have access and render
-   * them on top of the image - see where {imageAnchors()} is in the return method!
+   * them on top of the image.
    *
    * You will also want to make sure that it renders ON TOP of the image, so you should
    * look into changing the SCSS for whatever you render (hint: use absolute!)
    */
-  const imageAnchors = (): JSX.Element[] => {
+  const displayImageAnchors = (): void => {
     const imageWidth = imageContainer.current?.getBoundingClientRect().width
     const imageHeight = imageContainer.current?.getBoundingClientRect().height
+    // Step 1: We want to fill this list with divs to render on top of our image!
+    const anchorElementList: JSX.Element[] = []
     if (imageWidth && imageHeight) {
       const anchors: IAnchor[] = generateRandomImageAnchors(
         node.nodeId,
         imageWidth,
         imageHeight
       )
+      // Step 2: Loop through our anchors and add the div to the list we created in Step 1
     }
-    // TODO: We should be returning the different anchors!
-    return []
+    // Step 3: Call setImageAnchors and pass the filled anchorElementList that you just created
   }
 
   return (
@@ -173,7 +199,7 @@ export const ImageContent = (props: INodeContentProps) => {
       onPointerMove={onMove}
       className="imageContent-wrapper"
     >
-      {imageAnchors()}
+      {imageAnchors}
       {
         <div className="selection" ref={selection}>
           <div
