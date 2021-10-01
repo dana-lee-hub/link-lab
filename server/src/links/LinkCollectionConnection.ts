@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb'
-import { failureServiceResponse, ILink, IServiceResponse } from '../types'
+import { failureServiceResponse, ILink, IServiceResponse, successfulServiceResponse } from '../types'
 
 /**
  * LinkCollectionConnection acts as an in-between communicator between
