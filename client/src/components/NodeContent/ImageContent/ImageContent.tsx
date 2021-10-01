@@ -22,7 +22,7 @@ export const ImageContent = (props: INodeContentProps) => {
 
   useEffect(() => {
     setSelectedExtent && setSelectedExtent(null)
-  }, [])
+  }, [setSelectedExtent])
 
   /**
    * onPointerDown initializes the selection

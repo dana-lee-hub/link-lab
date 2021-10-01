@@ -85,7 +85,6 @@ export const NodeView = (props: INodeViewProps) => {
       )
     } else if (selectedExtent?.type == 'text') {
       alert(
-        console.log(
           'startCharacter: ' +
             selectedExtent.startCharacter +
             '\n' +
@@ -94,7 +93,6 @@ export const NodeView = (props: INodeViewProps) => {
             '\n' +
             'text: ' +
             selectedExtent.text
-        )
       )
     } else {
       alert(selectedExtent)
