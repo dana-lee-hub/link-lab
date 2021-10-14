@@ -1,5 +1,5 @@
 import React from 'react'
-import { IAnchor } from '../../../types'
+import { Extent, IAnchor } from '../../../types'
 import { INodeContentProps } from '../NodeContent'
 import { generateRandomTextAnchors } from './textAnchors'
 import './TextContent.scss'
@@ -16,6 +16,8 @@ export const TextContent = (props: INodeContentProps) => {
    * TODO [Lab]: Add a use ref so that we can keep track of the text content
    */
 
+  const textRef = React.useRef<HTMLDivElement | null>(null)
+
   /**
    * TODO [Lab]: Add an onPointerUp method to update the selected extent
    *
@@ -30,10 +32,20 @@ export const TextContent = (props: INodeContentProps) => {
    * @param e: React.PointerEvent
    * @returns void
    */
-  const onPointerUp = (e: React.PointerEvent) => {}
+  const onPointerUp = (e: React.PointerEvent) => {
+    const t = document.getSelection()
+    if (setSelectedExtent) {
+      setSelectedExtent({
+        type: 'text',
+        startCharacter: t!.getRangeAt(0).startOffset,
+        endCharacter: t!.getRangeAt(0).endOffset,
+        text: t?.toString(),
+      })
+    }
+  }
 
   /**
-   * TODO [Lab]: Write a method where we display the existing anchors.
+   * TODO OPTIONAL [Lab]: Write a method where we display the existing anchors.
    * Normally we would fetch these from the database, but for the simplicity
    * of this lab we randomly generate them in the `textAnchors.ts` file in the
    * `TextContent` folder. So generateRandomTextAnchors is a method that
@@ -56,6 +68,10 @@ export const TextContent = (props: INodeContentProps) => {
   const displayTextAnchors = (): void => {
     const anchors: IAnchor[] = generateRandomTextAnchors(node.nodeId, content)
     // TODO
+    /* for (let i = 0; i < anchors.length; i++) {
+      const a = anchors[i]
+      textRef.current = a.extent
+    } */
   }
 
   /**
@@ -79,5 +95,10 @@ export const TextContent = (props: INodeContentProps) => {
    * 1. Add a ref object
    * 2. Add an onPointerUp method so that when we release our mouse we update the selected extent
    */
-  return <div className="textContent-wrapper">{content}</div>
+
+  return (
+    <div className="textContent-wrapper" ref={textRef} onPointerUp={onPointerUp}>
+      {content}
+    </div>
+  )
 }

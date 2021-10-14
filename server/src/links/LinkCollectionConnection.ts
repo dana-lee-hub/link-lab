@@ -1,5 +1,10 @@
 import { MongoClient } from 'mongodb'
-import { failureServiceResponse, ILink, IServiceResponse, successfulServiceResponse } from '../types'
+import {
+  failureServiceResponse,
+  ILink,
+  IServiceResponse,
+  successfulServiceResponse,
+} from '../types'
 
 /**
  * LinkCollectionConnection acts as an in-between communicator between
@@ -29,28 +34,30 @@ export class LinkCollectionConnection {
    *         failureServiceResponse on failure
    */
   async deleteLinks(linkIds: string[]): Promise<IServiceResponse<{}>> {
-    /* 
+    /*
     note, earlier in the constructor of linkCollectionConnection, we assign this.collectionName
     to 'links' and mongoClient to this.client
     */
-   const collection = await this.client.db().collection(this.collectionName)
+    const collection = await this.client.db().collection(this.collectionName)
 
-   /*
+    /*
    this query requests all documents where the field 'linkId' matches some element
    in 'linkIds'
    */
-  const myQuery = { linkId: { $in: linkIds } }
+    const myQuery = { linkId: { $in: linkIds } }
 
-  /*
+    /*
   we use 'deleteMany" bc we want to delete multiple documents that meet our query
   */
-  const deleteResponse = await collection.deleteMany(myQuery)
+    const deleteResponse = await collection.deleteMany(myQuery)
 
-  //check if deleteMany succeeded
-  if(deleteResponse.result.ok) {
-    return successfulServiceResponse({})
-  }
-  return failureServiceResponse('Failed to delete links')
+    // check if deleteMany succeeded
+    if (deleteResponse.result.ok) {
+      return successfulServiceResponse({})
+    }
+    return failureServiceResponse('Failed to delete links')
+
+    // look at NodeCollectionConnection for more tips on MongoDB queries
   }
 
   /**

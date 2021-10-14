@@ -1,3 +1,4 @@
+import { Divider } from '@chakra-ui/layout'
 import React, { useEffect, useRef, useState } from 'react'
 import * as fa from 'react-icons/fa'
 import { IAnchor, IImageExtent } from '../../../types'
@@ -186,9 +187,28 @@ export const ImageContent = (props: INodeContentProps) => {
         imageWidth,
         imageHeight
       )
+
       // Step 2: Loop through our anchors and add the div to the list we created in Step 1
+      for (let i = 0; i < anchors.length; i++) {
+        const anchor = anchors[i]
+        const a = anchor.extent as IImageExtent
+        anchorElementList[i] = (
+          <div
+            key={'image.' + anchor.anchorId}
+            className="image-anchor" style=
+            {{
+              // ! tells typescript that this will never be null, different from not operator
+              width: a.width,
+              height: a.height,
+              top: a.top,
+              left: a.left,
+            }}>
+          </div>
+        )
+      }
     }
     // Step 3: Call setImageAnchors and pass the filled anchorElementList that you just created
+    setImageAnchors(anchorElementList)
   }
 
   return (
